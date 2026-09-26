@@ -1,0 +1,6 @@
+@import mr.server.models.TestViewModel
+@param test: TestViewModel
+<html>
+<body><h1>Test template</h1>
+<p>one: ${test.one}</p>@if(test.two != null)<p>two: ${test.two}</p>@else<p>two is null</p>@endif</body>
+</html>
