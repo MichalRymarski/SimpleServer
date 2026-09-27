@@ -1,3 +1,0 @@
-@import mr.server.models.JTEViewModel
-@param viewModel: JTEViewModel
-<html><span>${viewModel.description}</span></html>

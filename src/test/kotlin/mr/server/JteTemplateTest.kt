@@ -23,6 +23,6 @@ class JteTemplateTest {
         val response = app(Request(GET, "/templates/jte/test"))
 
         response shouldHaveStatus OK
-        response shouldHaveBody "<html><body><h1>Test template</h1><p>one: 1</p><p>two is null</p></body></html>\n"
+        response shouldHaveBody "<html>\n<body><h1>Test template</h1>\n<p>one: 1</p><p>two is null</p></body>\n</html>\n"
     }
 }
