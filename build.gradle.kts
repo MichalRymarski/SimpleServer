@@ -61,6 +61,8 @@ tasks {
 
 dependencies {
     implementation(platform("org.http4k:http4k-bom:6.60.0.0"))
+    // forkhandles - provides result4k (via http4k) with version-free access
+    implementation(platform("dev.forkhandles:forkhandles-bom:3.0.0.0"))
 
     // http4k - core + server
     implementation("org.http4k:http4k-core")
@@ -96,6 +98,8 @@ dependencies {
     // test
     testImplementation("org.http4k:http4k-testing-hamkrest")
     testImplementation("org.http4k:http4k-testing-kotest")
+    // result4k matchers: shouldBeSuccess()/shouldBeFailure()/beSuccess/beFailure
+    testImplementation("dev.forkhandles:result4k-kotest")
     testImplementation("org.junit.jupiter:junit-jupiter-api:6.1.3")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:6.1.3")
     testImplementation("org.junit.platform:junit-platform-launcher:6.1.3")
