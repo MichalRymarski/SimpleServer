@@ -24,3 +24,6 @@ headers.txt
 insight.txt
 body.txt
 body8000.txt
+
+# local H2 database files (DB_URL default points here)
+data/

@@ -1,5 +1,7 @@
 package mr.server
 
+import mr.server.db.closeDatabase
+import mr.server.db.initDatabase
 import mr.server.mcp.simpleServerMcpStreaming
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
@@ -24,6 +26,9 @@ fun startOrNextPort(startPort: Int, start: (Int) -> Http4kServer): Http4kServer 
 }
 
 fun main() {
+    initDatabase()
+    Runtime.getRuntime().addShutdownHook(Thread { closeDatabase() })
+
     val printingApp: HttpHandler = PrintRequest().then(app)
 
     val server = startOrNextPort(9000) { printingApp.asServer(Helidon(it)).start() }

@@ -1,3 +1,4 @@
+
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
@@ -83,13 +84,22 @@ dependencies {
     implementation("org.http4k:http4k-security-oauth")
     implementation("org.http4k:http4k-connect-storage-jdbc")
 
+    // database - exposed (dsl + jdbc) + pooling + drivers, all pinned together
+    implementation("org.jetbrains.exposed:exposed-core:1.5.0")
+    implementation("org.jetbrains.exposed:exposed-jdbc:1.5.0")
+    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:1.5.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.8.0")
+    implementation("com.zaxxer:HikariCP:7.1.0")
+    implementation("com.h2database:h2:2.5.250")
+    //implementation("org.postgresql:postgresql:42.7.13")
+
     // http4k pro - mcp, hot reload
     implementation("org.http4k.pro:http4k-ai-mcp-sdk")
     implementation("org.http4k.pro:http4k-tools-hotreload")
 
     // logging - slf4j facade + logback backend (+ helidon bridge)
     implementation("io.github.oshai:kotlin-logging-jvm:8.0.4")
-    implementation("ch.qos.logback:logback-classic:1.5.18")
+    implementation("ch.qos.logback:logback-classic:1.6.4")
     implementation("io.helidon.logging:helidon-logging-slf4j:4.5.4")
 
     // jte - direct api use (precompiled engine) + gradle plugin below
