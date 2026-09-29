@@ -6,13 +6,8 @@ import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import kotlin.time.Clock
 import kotlin.time.Instant
 
-// Domain model: pure Kotlin, no HTTP or JSON concerns.
 data class User(val id: Int, val name: String, val createdAt: Instant)
 
-// Thin repository over Exposed transactions. An object, not an injected class:
-// Database.connect() registers a global default database, so transaction {}
-// needs no handle passed in. If you ever need a second database, use the
-// transaction(db) { } overload with an explicit handle instead.
 object UserRepository {
     fun all(): List<User> = transaction {
         Users.selectAll().map { row ->

@@ -6,9 +6,9 @@ import mr.server.formats.nameField
 import mr.server.formats.precompiledJteRenderer
 import mr.server.formats.strictFormBody
 import mr.server.models.TestViewModel
-import mr.server.routes.DbRoute
 import mr.server.routes.ExampleContractRoute
 import mr.server.routes.HomeHttpRoute
+import mr.server.routes.UserRoute
 import org.http4k.contract.contract
 import org.http4k.contract.openapi.ApiInfo
 import org.http4k.contract.openapi.v3.OpenApi3
@@ -45,7 +45,7 @@ private val catchAll: Filter = ServerFilters.CatchAll { throwable ->
 private val router: HttpHandler = routes(
     HomeHttpRoute.handlers,
     ExampleContractRoute.handler,
-    DbRoute.handlers,
+    UserRoute.handlers,
     "/formats/multipart" bind POST to { request ->
         // to extract the contents, we first extract the form and then extract the fields from it using the lenses
         // NOTE: we are "using" the form body here because we want to close the underlying file streams

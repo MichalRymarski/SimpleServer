@@ -15,7 +15,6 @@ import org.http4k.format.Jackson.auto
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 
-// JSON shape: dates as ISO strings, so Jackson needs no JavaTime module.
 data class UserDto(val id: Int, val name: String, val createdAt: String)
 data class CreateUser(val name: String)
 
@@ -23,15 +22,16 @@ private val userListLens = Body.auto<List<UserDto>>().toLens()
 private val userLens = Body.auto<UserDto>().toLens()
 private val createUserLens = Body.auto<CreateUser>().toLens()
 
-private fun toDto(user: User) =
-    UserDto(user.id, user.name, user.createdAt.toString())
+private fun toDto(user: User) = UserDto(user.id, user.name, user.createdAt.toString())
 
-object DbRoute {
-    private val listUsers = "/db/users" bind GET to {
+object UserRoute {
+    private const val PATH = "/users"
+
+    private val listUsers = PATH bind GET to {
         Response(OK).with(userListLens of UserRepository.all().map(::toDto))
     }
 
-    private val createUser = "/db/users" bind POST to { request ->
+    private val createUser = PATH bind POST to { request ->
         val body = createUserLens(request)
         Response(CREATED).with(userLens of toDto(UserRepository.create(body.name)))
     }

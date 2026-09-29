@@ -3,6 +3,8 @@ package mr.server.db
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.github.oshai.kotlinlogging.KotlinLogging
+import mr.server.db.entity.chat.Chat
+import mr.server.db.entity.chat.Message
 import mr.server.db.entity.user.Users
 import org.http4k.core.Filter
 import org.jetbrains.exposed.v1.jdbc.Database
@@ -45,7 +47,7 @@ fun initDatabase(config: DbConfig = DbConfig()) {
             // Fine for local dev / H2. Deprecated upstream in favour of real migrations
             // (exposed-migration-jdbc + Flyway) — switch when the schema stabilises.
             @Suppress("DEPRECATION")
-            SchemaUtils.createMissingTablesAndColumns(Users)
+            SchemaUtils.createMissingTablesAndColumns(Users, Chat, Message)
         }
         Log.info { "Database ready" }
     }

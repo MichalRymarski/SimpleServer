@@ -1,0 +1,12 @@
+### List users
+GET http://{{host}}:{{port}}/users
+
+### Create a user
+POST http://{{host}}:{{port}}/users
+Content-Type: application/json
+
+{
+  "name": "jim"
+}
+
+###
