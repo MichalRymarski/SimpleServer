@@ -40,7 +40,7 @@ class UserRouteTest {
 
     @Test
     fun `empty user list`() {
-        val response = app(Request(GET, "/db/users"))
+        val response = app(Request(GET, "/users"))
 
         response shouldHaveStatus OK
         check(response.bodyString() == "[]") { "unexpected body: ${response.bodyString()}" }
@@ -49,7 +49,7 @@ class UserRouteTest {
     @Test
     fun `create and list users`() {
         val created = app(
-            Request(POST, "/db/users")
+            Request(POST, "/users")
                 .header("Content-Type", "application/json")
                 .body("""{"name":"jim"}""")
         )
@@ -57,7 +57,7 @@ class UserRouteTest {
         created shouldHaveStatus CREATED
         check(created.bodyString().contains("jim")) { "unexpected body: ${created.bodyString()}" }
 
-        val listed = app(Request(GET, "/db/users"))
+        val listed = app(Request(GET, "/users"))
         listed shouldHaveStatus OK
         check(listed.bodyString().contains("jim")) { "unexpected body: ${listed.bodyString()}" }
     }

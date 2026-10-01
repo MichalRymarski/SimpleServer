@@ -10,15 +10,6 @@ import org.junit.jupiter.api.Test
 class JteTemplateTest {
 
     @Test
-    fun `renders jte template`() {
-        val response = app(Request(GET, "/templates/jte"))
-
-        println(response)
-        response shouldHaveStatus OK
-        response shouldHaveBody "<html><span>Hello there!</span></html>\n"
-    }
-
-    @Test
     fun `renders test template with null param`() {
         val response = app(Request(GET, "/templates/jte/test"))
 

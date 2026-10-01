@@ -1,0 +1,42 @@
+# ================================================================
+# BOB's side of the conversation.
+#
+# Run order:
+#   1. "1. Create bob" below  -> stores {{bobId}} globally
+#      (needs {{jimId}} + {{chatUuid}} from jim.http steps 1-2 first)
+#   2. run the rest top-to-bottom, then back to jim.http step 4.
+#
+# Rooms are identified by uuid now — pair order no longer matters.
+# ================================================================
+
+### 1. Create bob
+POST http://{{host}}:{{port}}/users
+Content-Type: application/json
+
+{
+  "name": "bob"
+}
+
+> {%
+    client.global.set("bobId", response.body.id);
+%}
+
+### 2. Reply to jim
+POST http://{{host}}:{{port}}/chat/{{chatUuid}}/messages
+Content-Type: application/json
+
+{
+  "senderId": {{bobId}},
+  "text": "hey jim, bob here!"
+}
+
+### 3. Read the room (should show both messages)
+GET http://{{host}}:{{port}}/chat/{{chatUuid}}/messages
+
+# --- live socket (needs an IDE version with WebSocket .http support) ---
+# Open this alongside jim.http's socket, then send here and watch
+# jim's socket receive it.
+# WEBSOCKET ws://{{host}}:{{port}}/chat/{{chatUuid}}
+#
+# === send text
+# {"senderId": {{bobId}}, "text": "live from bob"}

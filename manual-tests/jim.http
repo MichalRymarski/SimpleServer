@@ -1,0 +1,55 @@
+# ================================================================
+# JIM's side of the conversation.
+#
+# Run order:
+#   1. "1. Create jim" below            -> stores {{jimId}} globally
+#   2. "1. Create bob" in bob.http      -> stores {{bobId}} globally
+#   3. "2. Open chat" below             -> stores {{chatUuid}} globally
+#   4. run the rest top-to-bottom, then switch files for replies.
+#
+# Rooms are identified by uuid now — pair order no longer matters.
+# ================================================================
+
+### 1. Create jim
+POST http://{{host}}:{{port}}/users
+Content-Type: application/json
+
+{
+  "name": "jim"
+}
+
+> {%
+    client.global.set("jimId", response.body.id);
+%}
+
+### 2. Open chat with bob (needs {{bobId}} — run bob.http step 1 first!)
+POST http://{{host}}:{{port}}/chat
+Content-Type: application/json
+
+{
+  "userOne": {{jimId}},
+  "userTwo": {{bobId}}
+}
+
+> {%
+    client.global.set("chatUuid", response.body.uuid);
+%}
+
+### 3. Say hi
+POST http://{{host}}:{{port}}/chat/{{chatUuid}}/messages
+Content-Type: application/json
+
+{
+  "senderId": {{jimId}},
+  "text": "hi bob, jim here"
+}
+
+### 4. Read the room (again after bob replies in bob.http)
+GET http://{{host}}:{{port}}/chat/{{chatUuid}}/messages
+
+# --- live socket (needs an IDE version with WebSocket .http support) ---
+# Open this, then send from bob.http's socket and watch it arrive here.
+# WEBSOCKET ws://{{host}}:{{port}}/chat/{{chatUuid}}
+#
+# === send text
+# {"senderId": {{jimId}}, "text": "you there live?"}

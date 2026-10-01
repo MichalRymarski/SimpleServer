@@ -6,6 +6,7 @@ import mr.server.formats.nameField
 import mr.server.formats.precompiledJteRenderer
 import mr.server.formats.strictFormBody
 import mr.server.models.TestViewModel
+import mr.server.routes.ChatRoute
 import mr.server.routes.ExampleContractRoute
 import mr.server.routes.HomeHttpRoute
 import mr.server.routes.UserRoute
@@ -25,16 +26,19 @@ import org.http4k.lens.Query
 import org.http4k.lens.int
 import org.http4k.routing.bind
 import org.http4k.routing.routes
+import org.http4k.routing.websockets
 import org.http4k.security.ApiKeySecurity
 import org.http4k.security.Nonce.Companion.SECURE_NONCE
 import org.http4k.security.digest.DigestAlgorithm.MD5
 import org.http4k.template.viewModel
+import org.http4k.websocket.WsHandler
 
 private val Log = KotlinLogging.logger {}
 
 private val handleLensFailure: Filter = ServerFilters.CatchLensFailure { request, lensFailure ->
-    Log.warn { "Bad request ${request.method} ${request.uri}: ${lensFailure.failures.joinToString("; ")}" }
-    Response(BAD_REQUEST.description(lensFailure.failures.joinToString("; ")))
+    val error = "${request.method} ${request.uri}: ${lensFailure.failures.joinToString("; ")}"
+    Log.warn { "Bad request $error" }
+    Response(BAD_REQUEST.description(error))
 }
 
 private val catchAll: Filter = ServerFilters.CatchAll { throwable ->
@@ -42,10 +46,22 @@ private val catchAll: Filter = ServerFilters.CatchAll { throwable ->
     Response(INTERNAL_SERVER_ERROR).body("Internal Server Error")
 }
 
+private val handleDomainErrors: Filter = Filter { next ->
+    { request ->
+        try {
+            next(request)
+        } catch (e: IllegalArgumentException) {
+            Log.warn { "Bad request ${request.method} ${request.uri}: ${e.message}" }
+            Response(BAD_REQUEST).body(e.message ?: "Invalid request")
+        }
+    }
+}
+
 private val router: HttpHandler = routes(
     HomeHttpRoute.handlers,
-    ExampleContractRoute.handler,
+    ExampleContractRoute.handlers,
     UserRoute.handlers,
+    ChatRoute.handlers,
     "/formats/multipart" bind POST to { request ->
         // to extract the contents, we first extract the form and then extract the fields from it using the lenses
         // NOTE: we are "using" the form body here because we want to close the underlying file streams
@@ -74,4 +90,8 @@ private val router: HttpHandler = routes(
     }
 )
 
-val app: HttpHandler = catchAll.then(handleLensFailure.then(router))
+val app: HttpHandler = catchAll.then(handleLensFailure.then(handleDomainErrors.then(router)))
+
+val wsApp: WsHandler = websockets(
+    ChatRoute.websocket
+)

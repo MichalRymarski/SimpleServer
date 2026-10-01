@@ -30,7 +30,7 @@ object ExampleContractRoute {
     }
 
     // standalone binding for the main app, built from the same handler
-    val handler: RoutingHttpHandler = "/echo" bind Method.GET to echo
+    val handlers: RoutingHttpHandler = "/echo" bind Method.GET to echo
 
     operator fun invoke(): ContractRoute = spec to echo
 }

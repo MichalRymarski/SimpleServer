@@ -4,6 +4,7 @@ import mr.server.db.closeDatabase
 import mr.server.db.initDatabase
 import mr.server.mcp.simpleServerMcpStreaming
 import org.http4k.core.HttpHandler
+import org.http4k.core.PolyHandler
 import org.http4k.core.then
 import org.http4k.filter.DebuggingFilters.PrintRequest
 import org.http4k.server.Helidon
@@ -31,7 +32,7 @@ fun main() {
 
     val printingApp: HttpHandler = PrintRequest().then(app)
 
-    val server = startOrNextPort(9000) { printingApp.asServer(Helidon(it)).start() }
+    val server = startOrNextPort(9000) { PolyHandler(printingApp, wsApp).asServer(Helidon(it)).start() }
     val mcpServer = startOrNextPort(9001) { simpleServerMcpStreaming().asServer(Helidon(it)).start() }
     println("Server started on " + server.port())
     println("MCP server started on " + mcpServer.port() + " (/mcp)")
